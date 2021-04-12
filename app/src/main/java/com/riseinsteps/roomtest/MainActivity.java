@@ -1,6 +1,7 @@
 package com.riseinsteps.roomtest;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     private TextView page, perPage, total, totalPages, url, text;
     private RecyclerView recyclerView;
     private Model responseModel;
@@ -29,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         fetchDataFromApi();
-
-//        setData();
-//        setRecyclerView();
 
     }
 
@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 text.setText("Text: " + responseModel.getSupport().getText());
                 adapter = new Adapter(getApplicationContext(), responseModel.getData());
                 recyclerView.setAdapter(adapter);
+
+                BackgroundThread thread = new BackgroundThread(response.body());
+                new Thread(thread).start();
             }
 
             @Override
@@ -76,11 +79,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setData() {
+    private class BackgroundThread implements Runnable {
+        private Model model;
 
-    }
+        public BackgroundThread(Model model) {
+            this.model = model;
+        }
 
-    private void setRecyclerView() {
+        @Override
+        public void run() {
+            Repository repository = new Repository(getApplication());
+            repository.insert(model);
 
+            Log.d(TAG, "Display Data via Room: " + new Repository(getApplication()).getModel().getData().get(2).getEmail());
+        }
     }
 }

@@ -6,11 +6,11 @@ import androidx.room.Query;
 
 import com.riseinsteps.roomtest.Model;
 
-//@Dao
+@Dao
 public interface RoomDao {
-//    @Insert
+    @Insert
     void insert(Model model);
 
-//    @Query("SELECT * FROM my_table")
+    @Query("SELECT * FROM my_table")
     Model getModel();
 }
